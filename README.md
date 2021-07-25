@@ -1,2 +1,2 @@
-#town SNS service
-#making web-pages by react
+# town SNS service
+## making web-pages by react
