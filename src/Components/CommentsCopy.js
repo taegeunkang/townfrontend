@@ -23,6 +23,7 @@ export default class ComemntPage extends Component{
       comments:[],
       shownComments: false,
       id : 0,
+      commentsCount: 0,
     };
 
   }
@@ -31,7 +32,7 @@ export default class ComemntPage extends Component{
   // const [comment, setComment] = useState({content:""});
   // const [comments, setComments] = useState([]);
   componentDidMount = async() => {
-    this.setState({id: this.props.id});
+    this.setState({id: this.props.id, commentsCount:this.props.count});
     // const cdata = await axios.get("http://localhost:3000/comment/load",{params :{"post": this.state.id}});
     // this.setState({comments: cdata});
 
@@ -44,7 +45,8 @@ export default class ComemntPage extends Component{
   
   toggleComment = async() => {
     const cdata = await axios.get("http://localhost:3000/comment/load",{params :{"post": this.state.id}});
-    this.setState({shownComments: !this.state.shownComments, comments: cdata.data});    
+    this.setState({shownComments: !this.state.shownComments, comments: cdata.data});
+
   }
 
 
@@ -67,7 +69,7 @@ export default class ComemntPage extends Component{
   
           return (
             <CommentContainer>
-                <div onClick={this.toggleComment}>댓글</div>
+                <div onClick={this.toggleComment} >댓글 {this.state.commentsCount}개</div>
                 {this.state.shownComments && comments &&
                   <>
                   <ListsContainer>{commentsList}</ListsContainer>
