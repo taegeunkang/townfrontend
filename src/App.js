@@ -1,21 +1,24 @@
-
 import React, { Component } from "react";
 import styled from "styled-components";
-import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import MainPage from "./Routes/MainPage";
 import Login from "./Routes/Login";
 import { getCurrentUser } from "./Components/APIUtils";
 import { ACCESS_TOKEN } from "./Components/constants";
 import LoadingIndicator from "./Components/LoadingIndicator";
 import OAuth2RedirectHandler from "./Components/OAuth2RedirectHandler";
+import AppHeader from "./Components/AppHeader";
+import Board from "./Routes/Board";
+import PrivateRoute from "./Routes/PrivateRoute";
 const Container = styled.div`
- display: flex;
- flex-direction: column;
- width: 100%;
- height: 100vh;
- padding: 0px;
- margin: 0px;
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+
+  padding: 0px;
+  margin: 0px;
 `;
+const HeaderContainer = styled.div``;
 
 class App extends Component {
   constructor(props) {
@@ -23,55 +26,92 @@ class App extends Component {
     this.state = {
       authenticated: false,
       currentUser: null,
-      loading :false
-    }
-    
+      loading: false,
+    };
+    this.loadCurrentlyLoggedInUser = this.loadCurrentlyLoggedInUser.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
   }
 
   loadCurrentlyLoggedInUser() {
     this.setState({
-      loading : true
+      loading: true,
     });
-    getCurrentUser().then(response => {
-      console.log(response);
-      this.setState({
-        currentUser: response,
-        authenticated:true,
-        loading : false
+    getCurrentUser()
+      .then((response) => {
+        console.log(response);
+        this.setState({
+          currentUser: response,
+          authenticated: true,
+          loading: false,
+        });
       })
-    }).catch(error => {
-      this.setState({
-        loading:false
+      .catch((error) => {
+        this.setState({
+          loading: false,
+        });
       });
-
-    });
-    
   }
-  
+  handleWrite() {
+    this.setState({ write: !this.state.write });
+  }
   handleLogout() {
     localStorage.removeItem(ACCESS_TOKEN);
     this.setState({
-      authenticated:false,
-      currentUser:null
+      authenticated: false,
+      currentUser: null,
     });
-    console.log("loged out!");
-
   }
   componentDidMount() {
     this.loadCurrentlyLoggedInUser();
   }
 
   render() {
-    if(this.state.loading) {
-      return <LoadingIndicator />
+    if (this.state.loading) {
+      return <LoadingIndicator />;
     }
-  return (<Container>
-    <Router>
-      <Route path="/" exact component={MainPage}/>
-      <Route path="/login" render = {(props) => <Login authenticated={this.state.authenticated} {...props}/>} />
-      <Route path="/oauth2/redirect" component={OAuth2RedirectHandler}></Route>  
-    </Router>
-  </Container>);
+    return (
+      <div>
+        <Router>
+          <AppHeader
+            authenticated={this.state.authenticated}
+            onLogout={this.handleLogout}
+            currentUser={this.state.currentUser}
+          />
+
+          <Container>
+            <Route
+              exact
+              path="/"
+              render={(props) => (
+                <MainPage
+                  authenticated={this.state.authenticated}
+                  currentUser={this.state.currentUser}
+                  {...props}
+                />
+              )}
+            />
+            <Route
+              exact
+              path="/login"
+              render={(props) => (
+                <Login authenticated={this.state.authenticated} {...props} />
+              )}
+            />
+            <Route
+              exact
+              path="/oauth2/redirect"
+              component={OAuth2RedirectHandler}
+            />
+          </Container>
+          <PrivateRoute
+            path="/board/:number"
+            authenticated={this.state.authenticated}
+            currentUser={this.state.currentUser}
+            component={Board}
+          />
+        </Router>
+      </div>
+    );
   }
 }
 

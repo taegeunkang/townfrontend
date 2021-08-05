@@ -1,0 +1,14 @@
+.menu_style:link {
+  text-decoration: none;
+  color: black;
+}
+
+.menu_style:visited {
+  text-decoration: none;
+  color: black;
+}
+
+.menu_style:active {
+  text-decoration: none;
+  color: black;
+}
