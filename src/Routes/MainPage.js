@@ -1,10 +1,8 @@
 import { Component } from "react";
-
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
-import CommentsCopy from "../Components/CommentsCopy";
-import { getPost, uploadPost, deletePost } from "../Components/APIUtils";
+import { getPost, uploadPost } from "../Components/APIUtils";
 import { faCommentAlt } from "@fortawesome/free-regular-svg-icons";
 
 const UserData = styled.div`

@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom";
 import { getOnePost, deletePost } from "../Components/APIUtils";
 import Comments from "../Components/Comments";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEllipsisH, faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import { faEdit, faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 const BoardContainer = styled.div`
   width: 100%;
@@ -38,20 +37,22 @@ const EditBox = styled.div`
   display: flex;
   justify-content: space-between;
 `;
-export default function Board({ history, currentUser, match }) {
+export default function Board({ authenticated, history, currentUser, match }) {
   const [content, setContent] = useState([]);
   const { number } = useParams();
 
   useEffect(() => {
-    getOnePost(number).then((response) => {
-      setContent(response);
-    });
+    getOnePost(number)
+      .then((response) => {
+        setContent(response);
+        if (response.length == 0) {
+          history.push("/");
+        }
+      })
+      .catch((error) => {
+        history.push("/login");
+      });
   }, []);
-
-  useEffect(() => {
-    console.log(content);
-    console.log(currentUser);
-  }, [content]);
 
   const deleteHandler = () => {
     let postId = {};

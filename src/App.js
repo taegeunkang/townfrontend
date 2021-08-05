@@ -103,11 +103,17 @@ class App extends Component {
               component={OAuth2RedirectHandler}
             />
           </Container>
-          <PrivateRoute
+          <Route
             path="/board/:number"
             authenticated={this.state.authenticated}
             currentUser={this.state.currentUser}
-            component={Board}
+            render={(props) => (
+              <Board
+                authenticated={this.state.authenticated}
+                currentUser={this.state.currentUser}
+                {...props}
+              />
+            )}
           />
         </Router>
       </div>

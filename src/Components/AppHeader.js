@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router";
 import styled from "styled-components";
 import "./AppHeader.css";
 
@@ -46,6 +47,11 @@ const Space = styled.div`
   color: transparent;
 `;
 export default function AppHeader(props) {
+  const history = useHistory();
+  const handleLogout = () => {
+    props.onLogout();
+    history.push("/login");
+  };
   return (
     <Header>
       {props.authenticated ? (
@@ -61,7 +67,7 @@ export default function AppHeader(props) {
             </Menu>
 
             <Menu>
-              <Logout onClick={props.onLogout}>Logout</Logout>
+              <Logout onClick={handleLogout}>Logout</Logout>
             </Menu>
           </MenuList>
           <Home>

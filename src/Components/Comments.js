@@ -1,8 +1,9 @@
 import React, { Component } from "react";
 
 import styled from "styled-components";
-import { loadComment, setComment } from "./APIUtils";
-
+import { loadComment, setComment, deleteComment, deletePost } from "./APIUtils";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 const CommentContainer = styled.div`
   display: flex;
   width: 100%;
@@ -43,6 +44,7 @@ const ListsContainer = styled.ul`
 const WritingDate = styled.div`
   display: flex;
   width: 33.3%;
+  gap: 1rem;
   justify-content: flex-end;
 `;
 const Box = styled.div`
@@ -64,11 +66,13 @@ const CommentsContents = styled.li`
   width: 100%;
   margin-bottom: 0.7rem;
 `;
-
-const CloseButton = styled.div`
-  margin-right: -30rem;
+const DeleteBox = styled.span`
+  border: none;
+  background-color: transparent;
+  width: auto;
+  height: auto;
 `;
-const CommentsTitle = styled.div``;
+
 export default class ComemntPage extends Component {
   constructor(props) {
     super(props);
@@ -85,6 +89,7 @@ export default class ComemntPage extends Component {
 
     loadComment(this.props.id).then((response) => {
       this.setState({ comments: response });
+      console.log(response);
     });
   };
 
@@ -133,6 +138,17 @@ export default class ComemntPage extends Component {
     });
     this.setState({ comment: "" });
   };
+  deleteHandler = (e) => {
+    let target = {};
+
+    target["commentId"] = e.currentTarget.getAttribute("name");
+    target["postId"] = e.currentTarget.getAttribute("value");
+    console.log(target);
+
+    deleteComment(target).then((response) => {
+      this.setState({ comments: response });
+    });
+  };
 
   render() {
     const comments = this.state.comments;
@@ -142,8 +158,20 @@ export default class ComemntPage extends Component {
           <ProfileImage src={comment[6]} alt="profileImage"></ProfileImage>
           <Writer>{comment[5]}</Writer>
         </CommentWriter>
-        <Content>{comment[[2]]}</Content>{" "}
-        <WritingDate>{this.timeForToday(comment[1])}</WritingDate>
+        <Content>{comment[[2]]}</Content>
+
+        <WritingDate>
+          {comment[4] == this.props.currentUser.id ? (
+            <DeleteBox
+              name={comment[0]}
+              value={comment[3]}
+              onClick={this.deleteHandler}
+            >
+              <FontAwesomeIcon size="1x" icon={faTrashAlt} />
+            </DeleteBox>
+          ) : null}
+          {this.timeForToday(comment[1])}
+        </WritingDate>
       </CommentsContents>
     ));
 

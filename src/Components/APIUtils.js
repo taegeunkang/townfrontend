@@ -94,3 +94,10 @@ export function setComment(commentRequest) {
     body: JSON.stringify(commentRequest),
   });
 }
+export function deleteComment(deleteRequest) {
+  return request({
+    url: API_BASE_URL + "/comment/delete",
+    method: "POST",
+    body: JSON.stringify(deleteRequest),
+  });
+}
