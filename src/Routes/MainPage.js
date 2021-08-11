@@ -94,6 +94,7 @@ const AreaBox = styled.div`
 const CommentsBox = styled.div`
   display: flex;
   position: relative;
+  z-index: -1;
   right: -16rem;
 `;
 const Name = styled.div``;

@@ -54,7 +54,7 @@ export default function Board({ authenticated, currentUser, match }) {
       .catch((error) => {
         history.push("/login");
       });
-  });
+  }, []);
 
   const deleteHandler = () => {
     let postId = {};
