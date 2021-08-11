@@ -9,7 +9,8 @@ import LoadingIndicator from "./Components/LoadingIndicator";
 import OAuth2RedirectHandler from "./Components/OAuth2RedirectHandler";
 import AppHeader from "./Components/AppHeader";
 import Board from "./Routes/Board";
-import PrivateRoute from "./Routes/PrivateRoute";
+import Edit from "./Routes/Edit";
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -18,7 +19,6 @@ const Container = styled.div`
   padding: 0px;
   margin: 0px;
 `;
-const HeaderContainer = styled.div``;
 
 class App extends Component {
   constructor(props) {
@@ -38,7 +38,6 @@ class App extends Component {
     });
     getCurrentUser()
       .then((response) => {
-        console.log(response);
         this.setState({
           currentUser: response,
           authenticated: true,
@@ -102,19 +101,25 @@ class App extends Component {
               path="/oauth2/redirect"
               component={OAuth2RedirectHandler}
             />
+            <Route
+              path="/board/:number"
+              authenticated={this.state.authenticated}
+              currentUser={this.state.currentUser}
+              render={(props) => (
+                <Board
+                  authenticated={this.state.authenticated}
+                  currentUser={this.state.currentUser}
+                  {...props}
+                />
+              )}
+            />
+            <Route
+              path="/edit/:number"
+              authenticated={this.state.authenticated}
+              currentUser={this.state.currentUser}
+              component={Edit}
+            />
           </Container>
-          <Route
-            path="/board/:number"
-            authenticated={this.state.authenticated}
-            currentUser={this.state.currentUser}
-            render={(props) => (
-              <Board
-                authenticated={this.state.authenticated}
-                currentUser={this.state.currentUser}
-                {...props}
-              />
-            )}
-          />
         </Router>
       </div>
     );

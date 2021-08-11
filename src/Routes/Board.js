@@ -5,6 +5,7 @@ import { getOnePost, deletePost } from "../Components/APIUtils";
 import Comments from "../Components/Comments";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrashAlt } from "@fortawesome/free-regular-svg-icons";
+import { useHistory } from "react-router";
 const BoardContainer = styled.div`
   width: 100%;
   display: flex;
@@ -37,28 +38,34 @@ const EditBox = styled.div`
   display: flex;
   justify-content: space-between;
 `;
-export default function Board({ authenticated, history, currentUser, match }) {
+export default function Board({ authenticated, currentUser, match }) {
   const [content, setContent] = useState([]);
   const { number } = useParams();
+  const history = useHistory();
 
   useEffect(() => {
     getOnePost(number)
       .then((response) => {
         setContent(response);
-        if (response.length == 0) {
+        if (response.length === 0) {
           history.push("/");
         }
       })
       .catch((error) => {
         history.push("/login");
       });
-  }, []);
+  });
 
   const deleteHandler = () => {
     let postId = {};
     postId["id"] = content[0][0];
     deletePost(postId).then((response) => {});
     history.push("/");
+  };
+  const editHandler = () => {
+    let path = "/edit/" + content[0][0];
+
+    history.push(path);
   };
 
   //시간 계산 함수 나중에 사용
@@ -98,9 +105,9 @@ export default function Board({ authenticated, history, currentUser, match }) {
               <CreatedDay>{timeForToday(content[0][2])}</CreatedDay>
             </WriterInfo>
 
-            {currentUser.id == content[0][3] ? (
+            {currentUser.id === content[0][3] ? (
               <EditBox>
-                <FontAwesomeIcon icon={faEdit} />
+                <FontAwesomeIcon onClick={editHandler} icon={faEdit} />
                 <FontAwesomeIcon onClick={deleteHandler} icon={faTrashAlt} />
               </EditBox>
             ) : null}

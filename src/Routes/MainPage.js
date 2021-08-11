@@ -2,9 +2,9 @@ import { Component } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
-import { getPost, uploadPost } from "../Components/APIUtils";
+import { getPost, uploadPost, uploadFileTest } from "../Components/APIUtils";
 import { faCommentAlt } from "@fortawesome/free-regular-svg-icons";
-
+import imageCompression from "browser-image-compression";
 const UserData = styled.div`
   width: 100vw;
   height: 100%;
@@ -154,6 +154,7 @@ export default class MainPage extends Component {
       files: [],
     };
     this.handleFileInput = this.handleFileInput.bind(this);
+    this.compressImage = this.compressImage.bind(this);
   }
   //시간 계산 함수 나중에 사용
   timeForToday = (value) => {
@@ -185,7 +186,6 @@ export default class MainPage extends Component {
     if (this.props.authenticated === true) {
       getPost().then((response) => {
         this.setState({ posts: response });
-        console.log(response);
       });
     } else {
       this.props.history.push("/login");
@@ -197,7 +197,6 @@ export default class MainPage extends Component {
 
   handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("!!!!");
     // axios.post("http://localhost:3000/post/upload", formData).then((posts) => {
     //   this.setState({ posts: posts.data });
     // });
@@ -208,31 +207,80 @@ export default class MainPage extends Component {
       postData["content"] = this.state.content;
       postData["user"] = this.props.currentUser.id;
 
-      console.log(postData);
       uploadPost(postData).then((response) => {
         this.setState({ posts: response });
       });
 
-      // const p = await axios.post(
-      //   "http://localhost:3000/board/post/upload",
-      //   formData
-      // );
-      // await this.setState({ posts: p.data });
-
+      // 파일 업로드 테스트
+      const data = await this.compressImage(this.state.files);
+      // console.log(typeof data);
+      this.handleImageForm(data);
       this.setState({ content: "" });
     }
   };
+  handleImageForm = (files) => {
+    const imageForm = new FormData();
+
+    files.forEach((file) => {
+      imageForm.append("files", file);
+    });
+
+    for (var pair of imageForm.entries()) {
+      console.log(pair);
+    }
+    uploadFileTest(imageForm).then(() => {
+      console.log("complete");
+      this.setState({ files: [], previewURL: [], fileCount: 0, write: false });
+    });
+  };
+
+  compressImage = async (files) => {
+    console.log("compression start");
+
+    const options = {
+      maxSizeMB: 0.5,
+      maxWidthOrHeight: 1280,
+      useWebWorker: true,
+    };
+    try {
+      let compressedFiles = [];
+
+      for (var j = 0; j < files.length; j++) {
+        let compressedfile = await imageCompression(files[j], options);
+
+        compressedFiles.push(compressedfile);
+      }
+      console.log("압축 후 ");
+      return compressedFiles;
+
+      //base64인코딩
+      //   let base64Files = [];
+
+      //   for (var i = 0; i < compressedFiles.length; i++) {
+      //     const reader = new FileReader();
+      //     reader.readAsDataURL(compressedFiles[i]);
+      //     //base64로 변환
+      //     let base64data;
+      //     reader.onloadend = () => {
+      //       base64data = reader.result;
+      //       base64Files.push(base64data);
+      //     };
+      //   }
+      //   // console.log(base64Files);
+      //   return base64Files;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   DeletePreviewImageHandler = (e) => {
-    console.log(e.target.value);
     let data = [];
     let len = this.state.fileCount;
-    console.log(this.state.files);
     for (var i = 0; i < len; i++) {
-      if (e.target.value != i) {
+      if (e.target.value !== i) {
         data.push(this.state.previewURL[i]);
       }
     }
-    console.log(data);
     this.setState({ previewURL: data, fileCount: this.state.fileCount - 1 });
   };
   handleFileInput = async (e) => {
@@ -248,7 +296,6 @@ export default class MainPage extends Component {
       let reader = new FileReader();
       let imageFile = fileArr[i];
       reader.onloadend = () => {
-        // console.log(reader.result);
         fileURLs.push(reader.result);
         this.setState({
           previewURL: this.state.previewURL.concat(reader.result),
@@ -270,9 +317,7 @@ export default class MainPage extends Component {
   //   });
   // };
   movetoPost = (id) => {
-    console.log("moved");
     let target = "/board/" + id;
-    console.log(target);
     this.props.history.push(target);
   };
 

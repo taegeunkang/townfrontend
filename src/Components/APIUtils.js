@@ -25,6 +25,21 @@ const request = (options) => {
   );
 };
 
+const requestFile = (options) => {
+  const headers = new Headers({});
+
+  if (localStorage.getItem(ACCESS_TOKEN)) {
+    headers.append(
+      "Authorization",
+      "Bearer " + localStorage.getItem(ACCESS_TOKEN)
+    );
+  }
+
+  const defaults = { headers: headers };
+  options = Object.assign({}, defaults, options);
+
+  return fetch(options.url, options);
+};
 export function getCurrentUser() {
   if (!localStorage.getItem(ACCESS_TOKEN)) {
     return Promise.reject("No access token set.");
@@ -73,6 +88,14 @@ export function uploadPost(postRequest) {
   });
 }
 
+export function uploadFileTest(postRequest) {
+  return requestFile({
+    url: API_BASE_URL + "/post/upload/testfiles",
+    method: "POST",
+    body: postRequest,
+  });
+}
+
 export function deletePost(postRequest) {
   return request({
     url: API_BASE_URL + "/post/delete",
@@ -99,5 +122,12 @@ export function deleteComment(deleteRequest) {
     url: API_BASE_URL + "/comment/delete",
     method: "POST",
     body: JSON.stringify(deleteRequest),
+  });
+}
+export function editPost(editRequest) {
+  return request({
+    url: API_BASE_URL + "/post/edit",
+    method: "POST",
+    body: JSON.stringify(editRequest),
   });
 }

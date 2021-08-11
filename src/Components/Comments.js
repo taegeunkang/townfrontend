@@ -1,9 +1,9 @@
 import React, { Component } from "react";
 
 import styled from "styled-components";
-import { loadComment, setComment, deleteComment, deletePost } from "./APIUtils";
+import { loadComment, setComment, deleteComment } from "./APIUtils";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrashAlt } from "@fortawesome/free-regular-svg-icons";
+import { faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 const CommentContainer = styled.div`
   display: flex;
   width: 100%;
@@ -15,11 +15,14 @@ const CommentContainer = styled.div`
   padding-right: 1rem;
   box-sizing: border-box;
 `;
-const Commentinput = styled.input``;
+const Commentinput = styled.input`
+  width: 100%;
+  height: 1.5rem;
+`;
 const CommentForm = styled.form`
   display: flex;
   width: 100%;
-
+  justify-content: center;
   padding-top: 1rem;
 `;
 const CommentWriter = styled.div`
@@ -35,24 +38,14 @@ const Content = styled.div`
   justify-content: flex-start;
   flex-direction: row;
 `;
-const ListsContainer = styled.ul`
-  display: flex;
-  margin-top: 1rem;
-  width: 30rem;
-  flex-direction: column;
-`;
+
 const WritingDate = styled.div`
   display: flex;
   width: 33.3%;
   gap: 1rem;
   justify-content: flex-end;
 `;
-const Box = styled.div`
-  width: 30rem;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-`;
+
 const ProfileImage = styled.img`
   border-radius: 25px;
   margin-right: 0.3rem;
@@ -89,7 +82,6 @@ export default class ComemntPage extends Component {
 
     loadComment(this.props.id).then((response) => {
       this.setState({ comments: response });
-      console.log(response);
     });
   };
 
@@ -124,15 +116,12 @@ export default class ComemntPage extends Component {
 
   handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(this.state.comment);
     const info = {};
 
     info["content"] = this.state.comment;
     info["post"] = this.props.id;
     info["user"] = this.props.currentUser.id;
 
-    console.log(info);
-    console.log(JSON.stringify(info));
     setComment(info).then((response) => {
       this.setState({ comments: response });
     });
@@ -143,7 +132,6 @@ export default class ComemntPage extends Component {
 
     target["commentId"] = e.currentTarget.getAttribute("name");
     target["postId"] = e.currentTarget.getAttribute("value");
-    console.log(target);
 
     deleteComment(target).then((response) => {
       this.setState({ comments: response });
@@ -159,16 +147,17 @@ export default class ComemntPage extends Component {
           <Writer>{comment[5]}</Writer>
         </CommentWriter>
         <Content>{comment[[2]]}</Content>
-
         <WritingDate>
-          {comment[4] == this.props.currentUser.id ? (
-            <DeleteBox
-              name={comment[0]}
-              value={comment[3]}
-              onClick={this.deleteHandler}
-            >
-              <FontAwesomeIcon size="1x" icon={faTrashAlt} />
-            </DeleteBox>
+          {comment[4] === this.props.currentUser.id ? (
+            <>
+              <DeleteBox
+                name={comment[0]}
+                value={comment[3]}
+                onClick={this.deleteHandler}
+              >
+                <FontAwesomeIcon size="1x" icon={faTrashAlt} />
+              </DeleteBox>
+            </>
           ) : null}
           {this.timeForToday(comment[1])}
         </WritingDate>
@@ -181,10 +170,10 @@ export default class ComemntPage extends Component {
           <>
             {commentsList}
             <CommentForm onSubmit={this.handleSubmit}>
-              <div>입력 :</div>
               <Commentinput
                 type="text"
                 name="comment"
+                placeholder="댓글 입력"
                 value={this.state.comment}
                 onChange={this.handleChange}
                 required
