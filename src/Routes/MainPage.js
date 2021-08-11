@@ -203,19 +203,37 @@ export default class MainPage extends Component {
     if (!this.props.authenticated) {
       alert("로그인이 필요합니다.");
     } else {
-      var postData = {};
-      postData["content"] = this.state.content;
-      postData["user"] = this.props.currentUser.id;
+      // var postData = {};
+      // postData["content"] = this.state.content;
+      // postData["user"] = this.props.currentUser.id;
 
-      uploadPost(postData).then((response) => {
-        this.setState({ posts: response });
+      const postData = new FormData();
+      postData.append("content", this.state.content);
+      postData.append("user", this.props.currentUser.id);
+      const data = await this.compressImage(this.state.files);
+      data.forEach((file) => {
+        postData.append("files", file);
+      });
+
+      // uploadPost(postData).then((response) => {
+      //   this.setState({ posts: response });
+      // });
+      uploadFileTest(postData).then(() => {
+        console.log("complete");
+        this.setState({
+          content: "",
+          files: [],
+          previewURL: [],
+          fileCount: 0,
+          write: false,
+        });
       });
 
       // 파일 업로드 테스트
-      const data = await this.compressImage(this.state.files);
+
       // console.log(typeof data);
-      this.handleImageForm(data);
-      this.setState({ content: "" });
+      // this.handleImageForm(data);
+      // this.setState({ content: "" });
     }
   };
   handleImageForm = (files) => {
@@ -225,9 +243,6 @@ export default class MainPage extends Component {
       imageForm.append("files", file);
     });
 
-    for (var pair of imageForm.entries()) {
-      console.log(pair);
-    }
     uploadFileTest(imageForm).then(() => {
       console.log("complete");
       this.setState({ files: [], previewURL: [], fileCount: 0, write: false });
