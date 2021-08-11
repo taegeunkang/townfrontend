@@ -56,12 +56,16 @@ export default function Board({ authenticated, currentUser, match }) {
       });
   }, []);
 
+  //게시글 삭제
   const deleteHandler = () => {
     let postId = {};
     postId["id"] = content[0][0];
     deletePost(postId).then((response) => {});
-    history.push("/");
+    // history.push("/");
+    window.location.replace("/");
   };
+
+  //게시글 수정
   const editHandler = () => {
     let path = "/edit/" + content[0][0];
 
