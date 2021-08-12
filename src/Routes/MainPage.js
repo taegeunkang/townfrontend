@@ -10,6 +10,7 @@ import {
 } from "../Components/APIUtils";
 import { faCommentAlt } from "@fortawesome/free-regular-svg-icons";
 import imageCompression from "browser-image-compression";
+import { ReactTinyLink } from 'react-tiny-link'
 const UserData = styled.div`
   width: 100vw;
   height: 100%;
@@ -152,6 +153,7 @@ const DeletePreviewImage = styled.button`
   background-color: transparent;
   border: none;
 `;
+
 export default class MainPage extends Component {
   constructor(props) {
     super(props);
@@ -199,7 +201,6 @@ export default class MainPage extends Component {
     if (this.props.authenticated === true) {
       let sentence = [];
       const response = await getPost();
-      console.log(this.state.posts);
       response.map((post) => {
         if(this.handleURL(post[1]) !== null){
           post.push(this.handleURL(post[1])[0]);
@@ -207,7 +208,6 @@ export default class MainPage extends Component {
         
       });
       this.setState({ posts: response });
-      console.log(this.state.posts);
     } else {
       this.props.history.push("/login");
     }
@@ -247,6 +247,12 @@ export default class MainPage extends Component {
       // });
       await uploadFileTest(postData);
       const response = await getPost();
+      response.map((post) => {
+        if(this.handleURL(post[1]) !== null){
+          post.push(this.handleURL(post[1])[0]);
+        }
+        
+      });
       this.setState({ posts: response });
       this.setState({
         content: "",
@@ -271,13 +277,11 @@ export default class MainPage extends Component {
     });
 
     uploadFileTest(imageForm).then(() => {
-      console.log("complete");
       this.setState({ files: [], previewURL: [], fileCount: 0, write: false });
     });
   };
 
   compressImage = async (files) => {
-    console.log("compression start");
 
     const options = {
       maxSizeMB: 0.5,
@@ -292,7 +296,6 @@ export default class MainPage extends Component {
 
         compressedFiles.push(compressedfile);
       }
-      console.log("압축 후 ");
       return compressedFiles;
     } catch (error) {
       console.log(error);
@@ -385,8 +388,9 @@ export default class MainPage extends Component {
           </WritingBox>
           <ContentBox>
             <Content>{post[1]}</Content>
+            
+            {post.length > 8 ? (<ReactTinyLink cardSize="medium" showGraphic={true}  maxLine={2} minLine={1} url={post[8]} proxyUrl="https://cors.bridged.cc" />) : null}
             <ImageComponent count={post[7]} post_id={post[0]} />
-            {post.length > 8 ? (<a href={post[8]}>이동</a>) : null}
           </ContentBox>
 
           <CommentsBox>
@@ -465,7 +469,7 @@ const ImagePrint = styled.img`
   height: 35rem;
   object-fit: contain;
 `;
-class ImageComponent extends Component {
+export class ImageComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -507,7 +511,7 @@ class ImageComponent extends Component {
   render() {
     const images = this.state.files;
     const imagePrint = images.map((image, index) => (
-      <ImagePrint src={image} alt="이미지"></ImagePrint>
+      <ImagePrint key={index} src={image} alt="이미지"></ImagePrint>
     ));
 
     return (

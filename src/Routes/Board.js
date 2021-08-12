@@ -6,6 +6,8 @@ import Comments from "../Components/Comments";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrashAlt } from "@fortawesome/free-regular-svg-icons";
 import { useHistory } from "react-router";
+import { ReactTinyLink } from 'react-tiny-link'
+import { ImageComponent } from "./MainPage";
 const BoardContainer = styled.div`
   width: 100%;
   display: flex;
@@ -44,18 +46,29 @@ export default function Board({ authenticated, currentUser, match }) {
   const history = useHistory();
 
   useEffect(() => {
+   
     getOnePost(number)
-      .then((response) => {
-        setContent(response);
-        if (response.length === 0) {
-          history.push("/");
+    .then((response) => {
+        if(handleURL(response[0][1]) !== null) {
+          response.push(handleURL(response[0][1])[0]);
         }
-      })
-      .catch((error) => {
-        history.push("/login");
-      });
-  }, []);
+      if (response.length === 0) {
+        history.push("/");
+      }
+      setContent(response);
 
+
+    })
+    .catch((error) => {
+      history.push("/login");
+    });
+  }, []);
+  const handleURL = (url) => {
+    let reg =
+    new RegExp("(http(s)?:\/\/|www.)([a-z0-9w]+.*)+[a-z0-9]{2,4}([/a-z0-9-%#?&=w])+(.[a-z0-9]{2,4}([/a-z0-9-%#?&=w]+)*)*");
+    return reg.exec(url);
+
+  };
   //게시글 삭제
   const deleteHandler = () => {
     let postId = {};
@@ -106,6 +119,7 @@ export default function Board({ authenticated, currentUser, match }) {
             <WriterInfo>
               <Writer src={content[0][5]}></Writer>
               {content[0][4]}
+              
               <CreatedDay>{timeForToday(content[0][2])}</CreatedDay>
             </WriterInfo>
 
@@ -116,7 +130,11 @@ export default function Board({ authenticated, currentUser, match }) {
               </EditBox>
             ) : null}
           </WriterContainer>
-          <Content>{content[0][1]}</Content>
+          <Content>
+            {content[0][1]}
+          {content.length > 1 ? (<ReactTinyLink cardSize="medium" showGraphic={true}  maxLine={2} minLine={1} url={content[1]} proxyUrl="https://cors.bridged.cc" />) : null}
+              <ImageComponent count={content[0][6]} post_id={content[0][0]}  />
+          </Content>
           <Comments id={content[0][0]} currentUser={currentUser}></Comments>
         </BoardContainer>
       ) : null}
@@ -124,52 +142,3 @@ export default function Board({ authenticated, currentUser, match }) {
   );
 }
 
-// function LocalLogin() {
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     const loginRequest = Object.assign({}, this.state);
-//     login(loginRequest)
-//       .then((response) => {
-//         localStorage.setItem(ACCESS_TOKEN, response.ACCESS_TOKEN);
-//         console.log("successfully logged in!");
-//         this.props.history.push("/");
-//       })
-//       .catch((error) => {
-//         console.log("error break!");
-//       });
-//   };
-//   const handleChange = (e) => {
-//     var n = e.target.name;
-//     if (n == "email") {
-//       setEmail(e.target.value);
-//     } else {
-//       setPassword(e.target.value);
-//     }
-//   };
-//   return (
-//     <div>
-//       <form onSubmit={handleSubmit}>
-//         <input
-//           type="email"
-//           name="email"
-//           value={email}
-//           onChange={handleChange}
-//           required
-//           placeholder="이메일"
-//         />
-//         <input
-//           type="password"
-//           name="password"
-//           value={password}
-//           onChange={handleChange}
-//           required
-//           placeholder="비밀번호"
-//         />
-//         <input type="submit" id="로그인" />
-//       </form>
-//     </div>
-//   );
-// }

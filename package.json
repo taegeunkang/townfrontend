@@ -4,6 +4,7 @@
   "private": true,
   "proxy": "http://localhost:8080",
   "dependencies": {
+    "@dhaiwat10/react-link-preview": "1.7.2",
     "@fortawesome/fontawesome-svg-core": "1.2.35",
     "@fortawesome/free-brands-svg-icons": "5.15.3",
     "@fortawesome/free-regular-svg-icons": "5.15.3",
@@ -19,6 +20,7 @@
     "react-helmet": "6.1.0",
     "react-router-dom": "5.2.0",
     "react-scripts": "4.0.3",
+    "react-tiny-link": "3.6.1",
     "styled-components": "5.3.0",
     "web-vitals": "^1.0.1"
   },
