@@ -78,16 +78,20 @@ const ButtonContainer = styled.div`
   flex-direction: column;
   margin-right: 7rem;
 `;
-const Content = styled.div``;
+const Content = styled.div`
+  width: 35rem;
+  display: flex;
+  justify-content: flex-start;
+`;
 const ContentBox = styled.div`
-  width: 25rem;
-  margin-left: 1rem;
+  width: 35rem;
+
   height: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-right: 6rem;
-  margin-top: 0.5rem;
+  align-items: center;
+  margin-top: 0.7rem;
 `;
 const WritedDate = styled.div`
   padding-top: 0.5rem;
@@ -227,15 +231,15 @@ export default class MainPage extends Component {
       // uploadPost(postData).then((response) => {
       //   this.setState({ posts: response });
       // });
-      uploadFileTest(postData).then(() => {
-        console.log("complete");
-        this.setState({
-          content: "",
-          files: [],
-          previewURL: [],
-          fileCount: 0,
-          write: false,
-        });
+      await uploadFileTest(postData);
+      const response = await getPost();
+      this.setState({ posts: response });
+      this.setState({
+        content: "",
+        files: [],
+        previewURL: [],
+        fileCount: 0,
+        write: false,
       });
 
       // 파일 업로드 테스트
@@ -365,14 +369,11 @@ export default class MainPage extends Component {
             </Writer>
             <WritedDate>{this.timeForToday(post[2])}</WritedDate>
           </WritingBox>
-          <AreaBox>
-            <ContentBox>
-              <Content>{post[1]}</Content>
-              <ImageComponent count={post[7]} post_id={post[0]} />
-            </ContentBox>
-            {/*fontawesom 대체 예정  */}
-          </AreaBox>
-          {/* <Comments id={post.id} /> */}
+          <ContentBox>
+            <Content>{post[1]}</Content>
+            <ImageComponent count={post[7]} post_id={post[0]} />
+          </ContentBox>
+
           <CommentsBox>
             <FontAwesomeIcon icon={faCommentAlt} />
             {post[3]}
@@ -427,12 +428,6 @@ export default class MainPage extends Component {
           </>
         )}
         <UserListContainer>{postsprint}</UserListContainer>
-        <button onClick={this.loadImageFromBackend} value="불러오기">
-          불러오기
-        </button>
-        {this.state.imageFile !== "" ? (
-          <img src={this.state.imageFile} />
-        ) : null}
       </UserData>
     );
   }
@@ -443,6 +438,7 @@ const ImageContainer = styled.div`
   height: 100%;
   display: flex;
   overflow-y: hidden;
+  background-color: black;
 `;
 
 const ContainerBox = styled.div`
@@ -450,8 +446,8 @@ const ContainerBox = styled.div`
   height: 100%;
 `;
 const ImagePrint = styled.img`
-  width: 25rem;
-  height: 25rem;
+  width: 35rem;
+  height: 35rem;
   object-fit: contain;
 `;
 class ImageComponent extends Component {
