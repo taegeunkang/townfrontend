@@ -12,10 +12,15 @@ const BoardContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
+  background-color: white;
 `;
 const Content = styled.div`
   border-bottom: 1px solid black;
   padding: 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: left;
 `;
 const Writer = styled.img`
   width: 2rem;
@@ -39,6 +44,16 @@ const EditBox = styled.div`
   width: 2.4rem;
   display: flex;
   justify-content: space-between;
+`;
+const ImageContainer = styled.div`
+  width: 35rem;
+  height: 35rem;
+  display: flex;
+  justify-content: center;
+`;
+const ContentText = styled.div`
+  text-align: left;
+  width: 100%;
 `;
 export default function Board({ authenticated, currentUser, match }) {
   const [content, setContent] = useState([]);
@@ -131,9 +146,12 @@ export default function Board({ authenticated, currentUser, match }) {
             ) : null}
           </WriterContainer>
           <Content>
-            {content[0][1]}
+            <ContentText>{content[0][1]}</ContentText>
           {content.length > 1 ? (<ReactTinyLink cardSize="medium" showGraphic={true}  maxLine={2} minLine={1} url={content[1]} proxyUrl="https://cors.bridged.cc" />) : null}
+              {content[0][6] > 0 ? (<ImageContainer>
               <ImageComponent count={content[0][6]} post_id={content[0][0]}  />
+              </ImageContainer>) : null}
+              
           </Content>
           <Comments id={content[0][0]} currentUser={currentUser}></Comments>
         </BoardContainer>

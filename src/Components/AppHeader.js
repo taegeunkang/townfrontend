@@ -12,7 +12,7 @@ const Header = styled.div`
   position: -webkit-sticky;
   position: sticky;
   top: 0;
-  background-color: white;
+  background-color: rgba(255,255,255,1);
   border-bottom: 0.3px solid black;
 `;
 const Home = styled.div`

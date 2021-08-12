@@ -4,11 +4,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import {
   getPost,
-  uploadPost,
+
   uploadFileTest,
   loadImage,
 } from "../Components/APIUtils";
 import { faCommentAlt } from "@fortawesome/free-regular-svg-icons";
+import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import imageCompression from "browser-image-compression";
 import { ReactTinyLink } from 'react-tiny-link'
 const UserData = styled.div`
@@ -33,6 +34,10 @@ const CommentList = styled.li`
   list-style: none;
   width: 100%;
   border-bottom: 1px solid black;
+  border-top: 1px solid black;
+  border-radius: 15px;
+  background-color: white;
+  margin-bottom: 0.5rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -81,33 +86,36 @@ const ButtonContainer = styled.div`
 `;
 const Content = styled.div`
   width: 35rem;
+  padding-left: 2rem;
+  padding-right: 2rem;;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
   display: flex;
   justify-content: flex-start;
 `;
 const ContentBox = styled.div`
   width: 35rem;
-
   height: auto;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   margin-top: 0.7rem;
+  margin-bottom: 1rem;
 `;
 const WritedDate = styled.div`
   padding-top: 0.5rem;
   padding-right: 1.3rem;
   font-size: 0.8rem;
 `;
-const AreaBox = styled.div`
-  display: flex;
-  flex-direction: row;
-`;
+
 const CommentsBox = styled.div`
   display: flex;
-  position: relative;
-  z-index: -1;
-  right: -16rem;
+  width: 37rem;
+  border-top: 0.7px solid rgba(0,0,0,0.3);
+  margin-top: 0.3rem;
+  padding-top: 0.5rem;
+  
 `;
 const Name = styled.div``;
 
@@ -152,6 +160,23 @@ const DeletePreviewImage = styled.button`
   color: white;
   background-color: transparent;
   border: none;
+`;
+const Like = styled.div`
+  width: 33.3%;
+  border-right: 0.7px solid rgba(0,0,0,0.3);
+  display:flex;
+  justify-content:center;
+`;
+const Comment = styled.div`
+  width: 33.3%;
+  border-right: 0.7px solid rgba(0,0,0,0.3);
+  display:flex;
+  justify-content:center;
+`;
+const Share = styled.div`
+  width: 33.3%;
+  display:flex;
+  justify-content:center;
 `;
 
 export default class MainPage extends Component {
@@ -198,8 +223,8 @@ export default class MainPage extends Component {
   };
 
   componentDidMount = async () => {
+    
     if (this.props.authenticated === true) {
-      let sentence = [];
       const response = await getPost();
       response.map((post) => {
         if(this.handleURL(post[1]) !== null){
@@ -375,9 +400,7 @@ export default class MainPage extends Component {
       <>
         <CommentList
           key={post[0]}
-          onClick={() => {
-            this.movetoPost(post[0]);
-          }}
+        
         >
           <WritingBox>
             <Writer>
@@ -386,7 +409,9 @@ export default class MainPage extends Component {
             </Writer>
             <WritedDate>{this.timeForToday(post[2])}</WritedDate>
           </WritingBox>
-          <ContentBox>
+          <ContentBox   onClick={() => {
+            this.movetoPost(post[0]);
+          }}>
             <Content>{post[1]}</Content>
             
             {post.length > 8 ? (<ReactTinyLink cardSize="medium" showGraphic={true}  maxLine={2} minLine={1} url={post[8]} proxyUrl="https://cors.bridged.cc" />) : null}
@@ -394,8 +419,20 @@ export default class MainPage extends Component {
           </ContentBox>
 
           <CommentsBox>
+            <Like>
+            <FontAwesomeIcon size="ml" icon={faHeart} />
+          
+            </Like>
+            <Comment   onClick={() => {
+            this.movetoPost(post[0]);
+          }}>
             <FontAwesomeIcon icon={faCommentAlt} />
             {post[3]}
+            </Comment>
+          
+            <Share>
+            
+            </Share>
           </CommentsBox>
         </CommentList>
       </>
@@ -463,6 +500,8 @@ const ImageContainer = styled.div`
 const ContainerBox = styled.div`
   width: 100%;
   height: 100%;
+ 
+  
 `;
 const ImagePrint = styled.img`
   width: 35rem;

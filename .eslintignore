@@ -1,1 +1,3 @@
 src/Components/OAuth2RedirectHandler.js
+src/Routes/Board.js
+src/Routes/MainPage.js

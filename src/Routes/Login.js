@@ -8,6 +8,7 @@ import kakaoLogo from "../Components/img/kakao_login_medium_wide.png";
 const LoginContainer = styled.div`
   height: 94vh;
   width: 100%;
+  background-color: white;
   display: flex;
   align-items: center;
   justify-content: center;
