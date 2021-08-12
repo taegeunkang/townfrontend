@@ -195,14 +195,28 @@ export default class MainPage extends Component {
     return `${Math.floor(betweenTimeDay / 365)}년전`;
   };
 
-  componentDidMount = () => {
+  componentDidMount = async () => {
     if (this.props.authenticated === true) {
-      getPost().then((response) => {
-        this.setState({ posts: response });
+      let sentence = [];
+      const response = await getPost();
+      console.log(this.state.posts);
+      response.map((post) => {
+        if(this.handleURL(post[1]) !== null){
+          post.push(this.handleURL(post[1])[0]);
+        }
+        
       });
+      this.setState({ posts: response });
+      console.log(this.state.posts);
     } else {
       this.props.history.push("/login");
     }
+  };
+  handleURL = (url) => {
+    let reg =
+    new RegExp("(http(s)?:\/\/|www.)([a-z0-9w]+.*)+[a-z0-9]{2,4}([/a-z0-9-%#?&=w])+(.[a-z0-9]{2,4}([/a-z0-9-%#?&=w]+)*)*");
+    return reg.exec(url);
+
   };
   handleWrite = () => {
     this.setState({ write: !this.state.write });
@@ -372,6 +386,7 @@ export default class MainPage extends Component {
           <ContentBox>
             <Content>{post[1]}</Content>
             <ImageComponent count={post[7]} post_id={post[0]} />
+            {post.length > 8 ? (<a href={post[8]}>이동</a>) : null}
           </ContentBox>
 
           <CommentsBox>
