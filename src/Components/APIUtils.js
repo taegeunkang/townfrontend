@@ -24,7 +24,30 @@ const request = (options) => {
     })
   );
 };
+const responseFile = (options) => {
+  const headers = new Headers({
+    "Content-Type": "application/json",
+  });
 
+  if (localStorage.getItem(ACCESS_TOKEN)) {
+    headers.append(
+      "Authorization",
+      "Bearer " + localStorage.getItem(ACCESS_TOKEN)
+    );
+  }
+
+  const defaults = { headers: headers };
+  options = Object.assign({}, defaults, options);
+
+  return fetch(options.url, options).then((response) =>
+    response.blob().then((json) => {
+      if (!response.ok) {
+        return Promise.reject(json);
+      }
+      return json;
+    })
+  );
+};
 const requestFile = (options) => {
   const headers = new Headers({});
 
@@ -129,5 +152,12 @@ export function editPost(editRequest) {
     url: API_BASE_URL + "/post/edit",
     method: "POST",
     body: JSON.stringify(editRequest),
+  });
+}
+
+export function loadImage(imageRequest) {
+  return responseFile({
+    url: API_BASE_URL + "/image/" + imageRequest,
+    method: "GET",
   });
 }

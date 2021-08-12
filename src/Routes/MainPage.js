@@ -2,7 +2,12 @@ import { Component } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
-import { getPost, uploadPost, uploadFileTest } from "../Components/APIUtils";
+import {
+  getPost,
+  uploadPost,
+  uploadFileTest,
+  loadImage,
+} from "../Components/APIUtils";
 import { faCommentAlt } from "@fortawesome/free-regular-svg-icons";
 import imageCompression from "browser-image-compression";
 const UserData = styled.div`
@@ -78,7 +83,9 @@ const ContentBox = styled.div`
   width: 25rem;
   margin-left: 1rem;
   height: auto;
-
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   margin-right: 6rem;
   margin-top: 0.5rem;
 `;
@@ -153,6 +160,7 @@ export default class MainPage extends Component {
       previewURL: [],
       fileCount: 0,
       files: [],
+      imageFile: "",
     };
     this.handleFileInput = this.handleFileInput.bind(this);
     this.compressImage = this.compressImage.bind(this);
@@ -268,22 +276,6 @@ export default class MainPage extends Component {
       }
       console.log("압축 후 ");
       return compressedFiles;
-
-      //base64인코딩
-      //   let base64Files = [];
-
-      //   for (var i = 0; i < compressedFiles.length; i++) {
-      //     const reader = new FileReader();
-      //     reader.readAsDataURL(compressedFiles[i]);
-      //     //base64로 변환
-      //     let base64data;
-      //     reader.onloadend = () => {
-      //       base64data = reader.result;
-      //       base64Files.push(base64data);
-      //     };
-      //   }
-      //   // console.log(base64Files);
-      //   return base64Files;
     } catch (error) {
       console.log(error);
     }
@@ -336,6 +328,25 @@ export default class MainPage extends Component {
     let target = "/board/" + id;
     this.props.history.push(target);
   };
+  loadImageFromBackend = () => {
+    let name = "img0";
+    let file;
+    loadImage(name).then((response) => {
+      file = response;
+      console.log(response);
+
+      let reader = new FileReader();
+
+      reader.onloadend = () => {
+        this.setState({
+          imageFile: reader.result,
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+
+    console.log(this.state.imageFile);
+  };
 
   render() {
     const posts = this.state.posts;
@@ -357,6 +368,7 @@ export default class MainPage extends Component {
           <AreaBox>
             <ContentBox>
               <Content>{post[1]}</Content>
+              <ImageComponent count={post[7]} post_id={post[0]} />
             </ContentBox>
             {/*fontawesom 대체 예정  */}
           </AreaBox>
@@ -415,7 +427,84 @@ export default class MainPage extends Component {
           </>
         )}
         <UserListContainer>{postsprint}</UserListContainer>
+        <button onClick={this.loadImageFromBackend} value="불러오기">
+          불러오기
+        </button>
+        {this.state.imageFile !== "" ? (
+          <img src={this.state.imageFile} />
+        ) : null}
       </UserData>
+    );
+  }
+}
+
+const ImageContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  overflow-y: hidden;
+`;
+
+const ContainerBox = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+const ImagePrint = styled.img`
+  width: 25rem;
+  height: 25rem;
+  object-fit: contain;
+`;
+class ImageComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      files: [],
+      i: "",
+    };
+  }
+
+  componentDidMount = async () => {
+    let count = parseInt(this.props.count);
+    if (count > 0) {
+      const arr = await this.loadImageFromBackend(this.props.post_id, count);
+      this.setState({ files: arr });
+    }
+  };
+  convertTourl = async (arr) => {
+    let reader = new FileReader();
+    let imageFile = arr;
+    let c;
+    reader.onloadend = () => {
+      c = reader.result;
+    };
+    reader.readAsDataURL(imageFile);
+
+    return c;
+  };
+
+  loadImageFromBackend = async (post_id, count) => {
+    let file = [];
+    for (var i = 0; i < count; i++) {
+      let name = post_id + "/" + "img" + i;
+      const response = await loadImage(name);
+      const url = URL.createObjectURL(response);
+      file[i] = url;
+    }
+    return file;
+  };
+
+  render() {
+    const images = this.state.files;
+    const imagePrint = images.map((image, index) => (
+      <ImagePrint src={image} alt="이미지"></ImagePrint>
+    ));
+
+    return (
+      <ContainerBox>
+        {images.length > 0 ? (
+          <ImageContainer>{imagePrint}</ImageContainer>
+        ) : null}
+      </ContainerBox>
     );
   }
 }
