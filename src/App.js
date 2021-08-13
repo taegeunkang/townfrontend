@@ -87,6 +87,7 @@ class App extends Component {
                 <MainPage
                   authenticated={this.state.authenticated}
                   currentUser={this.state.currentUser}
+                  page = {0}
                   {...props}
                 />
               )}

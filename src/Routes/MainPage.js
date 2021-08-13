@@ -177,7 +177,9 @@ const Share = styled.div`
   display:flex;
   justify-content:center;
 `;
-
+const More = styled.div`
+  font-size: 2rem;
+`;
 export default class MainPage extends Component {
   constructor(props) {
     super(props);
@@ -191,6 +193,7 @@ export default class MainPage extends Component {
       fileCount: 0,
       files: [],
       imageFile: "",
+      page: 0,
     };
     this.handleFileInput = this.handleFileInput.bind(this);
     this.compressImage = this.compressImage.bind(this);
@@ -224,7 +227,9 @@ export default class MainPage extends Component {
   componentDidMount = async () => {
     
     if (this.props.authenticated === true) {
-      const response = await getPost();
+      const number = this.state.page;
+      console.log(number);
+      const response = await getPost(String(number));
       response.map((post) => {
         if(this.handleURL(post[1]) !== null){
           post.push(this.handleURL(post[1])[0]);
@@ -325,6 +330,16 @@ export default class MainPage extends Component {
       console.log(error);
     }
   };
+  loadMorePage = async () => {
+    let number = this.state.page;
+    number = number + 1;
+    const response = await getPost(String(number));
+    console.log(response);
+
+    this.setState({page : number, posts: this.state.posts.concat(response) });
+    console.log(this.state.page)
+
+  }
 
   DeletePreviewImageHandler = (e) => {
     let data = [];
@@ -418,6 +433,7 @@ export default class MainPage extends Component {
     return (
       <UserData>
         <UserListContainer>{postsprint}</UserListContainer>
+        <More onClick={this.loadMorePage}>더 보기</More>
       </UserData>
     );
   }

@@ -90,10 +90,10 @@ export function signup(signupRequest) {
   });
 }
 
-export function getPost() {
+export function getPost(pageRequest) {
   return request({
-    url: API_BASE_URL + "/post",
-    method: "POST",
+    url: API_BASE_URL + "/post?number="+pageRequest,
+    method: "GET",
   });
 }
 export function getOnePost(postRequest) {
