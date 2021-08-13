@@ -35,7 +35,6 @@ const CommentList = styled.li`
   width: 100%;
   border-bottom: 1px solid black;
   border-top: 1px solid black;
-  border-radius: 15px;
   background-color: white;
   margin-bottom: 0.5rem;
   display: flex;
@@ -363,36 +362,12 @@ export default class MainPage extends Component {
     nextState[e.target.name] = e.target.value;
     this.setState(nextState);
   };
-  // deleteHandler = (e) => {
-  //   let postId = {};
-  //   postId["id"] = e.target.value;
-  //   deletePost(postId).then((response) => {
-  //     this.setState({ posts: response });
-  //   });
-  // };
+
   movetoPost = (id) => {
     let target = "/board/" + id;
     this.props.history.push(target);
   };
-  loadImageFromBackend = () => {
-    let name = "img0";
-    let file;
-    loadImage(name).then((response) => {
-      file = response;
-      console.log(response);
-
-      let reader = new FileReader();
-
-      reader.onloadend = () => {
-        this.setState({
-          imageFile: reader.result,
-        });
-      };
-      reader.readAsDataURL(file);
-    });
-
-    console.log(this.state.imageFile);
-  };
+  
 
   render() {
     const posts = this.state.posts;
@@ -438,51 +413,10 @@ export default class MainPage extends Component {
       </>
     ));
 
-    const loadImage = this.state.previewURL.map((file, index) => (
-      <>
-        <PreviewImage src={file} />
-        <DeletePreviewImage
-          value={index}
-          onClick={this.DeletePreviewImageHandler}
-        >
-          X
-        </DeletePreviewImage>
-      </>
-    ));
+  
 
     return (
       <UserData>
-        <WriteBox onClick={this.handleWrite}>
-          <FontAwesomeIcon size="lg" icon={faPencilAlt} />
-        </WriteBox>
-        {this.state.write && (
-          <>
-            <ContentForm onSubmit={this.handleSubmit}>
-              <InputContent
-                name="content"
-                value={this.state.content}
-                onChange={this.handleChange}
-                required
-              ></InputContent>
-
-              <ButtonContainer>
-                <ImageLabel for="photo">사진</ImageLabel>
-                <ImageButton
-                  type="file"
-                  accept=".jpg, .png, .jpeg, .gif"
-                  name="photo"
-                  multiple
-                  id="photo"
-                  onChange={this.handleFileInput}
-                ></ImageButton>
-                <SubmitLabel for="submit">작성</SubmitLabel>
-                <SubmitButton type="submit" id="submit"></SubmitButton>
-              </ButtonContainer>
-            </ContentForm>
-
-            <PreviewImageContainer>{loadImage}</PreviewImageContainer>
-          </>
-        )}
         <UserListContainer>{postsprint}</UserListContainer>
       </UserData>
     );

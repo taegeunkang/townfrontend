@@ -10,6 +10,8 @@ import OAuth2RedirectHandler from "./Components/OAuth2RedirectHandler";
 import AppHeader from "./Components/AppHeader";
 import Board from "./Routes/Board";
 import Edit from "./Routes/Edit";
+import Write from "./Routes/Write";
+import PrivateRoute from "./Routes/PrivateRoute";
 
 const Container = styled.div`
   display: flex;
@@ -103,8 +105,6 @@ class App extends Component {
             />
             <Route
               path="/board/:number"
-              authenticated={this.state.authenticated}
-              currentUser={this.state.currentUser}
               render={(props) => (
                 <Board
                   authenticated={this.state.authenticated}
@@ -119,6 +119,11 @@ class App extends Component {
               currentUser={this.state.currentUser}
               component={Edit}
             />
+            <PrivateRoute
+             path="/write"
+             authenticated={this.state.authenticated}
+              currentUser={this.state.currentUser}
+             component={Write}/>
           </Container>
         </Router>
       </div>

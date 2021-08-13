@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useHistory } from "react-router";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
 import "./AppHeader.css";
 
@@ -20,18 +22,19 @@ const Home = styled.div`
   width: 33.3%;
   justify-content: center;
   align-items: center;
-  padding-left: 1rem;
 `;
 const MenuList = styled.ul`
   list-style: none;
   display: flex;
 
-  justify-content: flex-start;
   align-items: center;
-  width: 33.3%;
+  width: 100%;
 `;
 const Menu = styled.li`
-  margin-right: 1rem;
+  width: 33.3%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 const Login = styled.div`
   text-decoration: none;
@@ -44,7 +47,9 @@ const ProfileImage = styled.img`
 
 const Space = styled.div`
   width: 33.3%;
-  color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 export default function AppHeader(props) {
   const history = useHistory();
@@ -64,18 +69,21 @@ export default function AppHeader(props) {
                   alt="profileImage"
                 ></ProfileImage>
               </Link>
+              <Logout onClick={handleLogout}>Logout</Logout>
             </Menu>
 
             <Menu>
-              <Logout onClick={handleLogout}>Logout</Logout>
+              <Link class="menu_style" to="/">
+                Home
+              </Link>
+            </Menu>
+            <Menu>
+              <Link class="menu_style" to="/write" >
+              <FontAwesomeIcon size="lg" icon={faPencilAlt} />
+              </Link>
             </Menu>
           </MenuList>
-          <Home>
-            <Link class="menu_style" to="/">
-              Home
-            </Link>
-          </Home>
-          <Space>.</Space>
+          
         </>
       ) : (
         <>
@@ -94,7 +102,6 @@ export default function AppHeader(props) {
               </Link>
             </Menu>
           </MenuList>
-          <div>.</div>
         </>
       )}
     </Header>
