@@ -12,10 +12,10 @@ import { faCommentAlt } from "@fortawesome/free-regular-svg-icons";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import imageCompression from "browser-image-compression";
 import { ReactTinyLink } from 'react-tiny-link'
-import {GrLike, GrDislike} from "react-icons/gr";
+import {AiOutlineLike,AiOutlineDislike, AiTwotoneLike, AiTwotoneDislike} from "react-icons/ai"
 
 const UserData = styled.div`
-  width: 100vw;
+  width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -23,18 +23,12 @@ const UserData = styled.div`
   align-items: center;
 `;
 
-const ContentForm = styled.form`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  border-bottom: 1px solid black;
-  width: 100%;
-  height: 11rem;
-`;
+
 const CommentList = styled.li`
   list-style: none;
   width: 100%;
+  padding-right: 0px;
+  padding-left: 0px;
   border-bottom: 1px solid black;
   border-top: 1px solid black;
   background-color: white;
@@ -43,14 +37,9 @@ const CommentList = styled.li`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  box-sizing: border-box;
 `;
-const InputContent = styled.textarea`
-  width: 27rem;
-  margin-left: 3rem;
-  height: 7rem;
-  border: 1px solid black;
-  font-size: 1.3rem;
-`;
+
 const UserListContainer = styled.div`
   width: 100%;
   height: auto;
@@ -59,34 +48,8 @@ const UserListContainer = styled.div`
   align-items: center;
 `;
 
-const SubmitButton = styled.button`
-  display: none;
-`;
-const SubmitLabel = styled.label`
-  border: 1px solid black;
-  width: 3rem;
-  height: 1.5rem;
-  padding: 0px;
-  margin: 0px;
-  text-align: center;
-`;
-const ImageButton = styled.input`
-  display: none;
-`;
-
-const ImageLabel = styled.label`
-  width: 3rem;
-  height: 1.5rem;
-  border: 1px solid black;
-  text-align: center;
-`;
-const ButtonContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-right: 7rem;
-`;
 const Content = styled.div`
-  width: 35rem;
+  width: 100%;
   padding-left: 2rem;
   padding-right: 2rem;;
   margin-bottom: 1rem;
@@ -95,7 +58,7 @@ const Content = styled.div`
   justify-content: flex-start;
 `;
 const ContentBox = styled.div`
-  width: 35rem;
+  width: 100%;
   height: auto;
   display: flex;
   flex-direction: column;
@@ -145,7 +108,7 @@ const PreviewImageContainer = styled.div`
 `;
 const WritingBox = styled.div`
   display: flex;
-  width: 37rem;
+  width: 100%;
   justify-content: space-between;
 `;
 const PreviewImage = styled.img`
@@ -185,12 +148,14 @@ const More = styled.div`
 const Like = styled.div`
   width:50%;
   display:flex;
+  color: black;
   justify-content:center;
 `;
 
 const DisLike = styled.div`
    width:50%;
    display:flex;
+   color: black;
   justify-content:center;
 `;
 export default class MainPage extends Component {
@@ -210,6 +175,8 @@ export default class MainPage extends Component {
       scrollHeight: 0,
       scroll: false,
       loading: false,
+      like : [],
+      dislike : [],
     };
     this.handleFileInput = this.handleFileInput.bind(this);
     this.compressImage = this.compressImage.bind(this);
@@ -430,24 +397,24 @@ export default class MainPage extends Component {
     this.props.history.push(target);
   };
   componentDidUpdate() {
-  
-    // console.log("called componentDidUpdate");
-   
-    // const height =
-    // document.documentElement.scrollHeight -
-    // document.documentElement.clientHeight;
-    // let cnt =0;
-    // if(height == JSON.parse(window.sessionStorage.getItem("height")) && !this.state.scroll) {
-    //   const scrollOffset = window.sessionStorage.getItem("scrollOffset");
-    //   this.setState({scroll: true});
-    //   if(scrollOffset !== null){
-    //     window.scrollTo({top: JSON.parse(window.sessionStorage.getItem("scrollOffset")), behavior:"smooth"});
-    //     window.sessionStorage.removeItem("scrollOffset");
-    //   }
-
-    // }
-
   }
+
+  handleLike = (e) => {
+    const name = e.currentTarget.getAttribute("name");
+    console.log(name);
+    let likes = this.state.like;
+    likes[name] = true
+    this.setState({like : likes});
+    console.log(this.state.like);
+  }
+
+  handleDisLike = (e) => {
+    const name = e.currentTarget.getAttribute("name");
+    let dislikes = this.state.dislike;
+    dislikes[name] = true
+    this.setState({dislike : dislikes});
+  }
+
 
   render() {
     const posts = this.state.posts;
@@ -475,12 +442,12 @@ export default class MainPage extends Component {
 
           <CommentsBox>
             <Likes>
-              <Like>
-            <GrLike />
-            </Like>
-            <DisLike>
-            <GrDislike />
-            </DisLike>
+              <Like name = {post[0]} onClick={this.handleLike}>
+                {this.state.like[post[0]] ?<AiTwotoneLike /> : <AiOutlineLike />}
+               </Like>
+              <DisLike name = {post[0]} onClick={this.handleDisLike}>
+                {this.state.dislike[post[0]] ? <AiTwotoneDislike /> : <AiOutlineDislike /> }
+              </DisLike>
             </Likes>
             <Comment   onClick={() => {
             this.movetoPost(post[0]);
@@ -501,7 +468,7 @@ export default class MainPage extends Component {
     return (
       <UserData>
         <UserListContainer>{postsprint}</UserListContainer>
-        <More onClick={this.loadMorePage}>더 보기</More>
+        <More onClick={this.loadMorePage}>more</More>
       </UserData>
     );
   }
@@ -518,12 +485,13 @@ const ImageContainer = styled.div`
 const ContainerBox = styled.div`
   width: 100%;
   height: 100%;
+  padding:0px;
  
   
 `;
 const ImagePrint = styled.img`
-  width: 35rem;
-  height: 35rem;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 `;
 export class ImageComponent extends Component {

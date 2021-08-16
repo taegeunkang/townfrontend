@@ -1,6 +1,9 @@
+
 .menu_style:link {
   text-decoration: none;
   color: black;
+  font-size: 2rem;
+  font-family:'permanent-maker';
 }
 
 .menu_style:visited {
@@ -11,4 +14,21 @@
 .menu_style:active {
   text-decoration: none;
   color: black;
+}
+.menu_loginout {
+  text-decoration: none;
+  color: black;
+  font-size: 1rem;
+  font-family:'permanent-maker';
+}
+
+.menu_write:link {
+  color: black;
+}
+.menu_write:visited {
+  color: black;
+}
+.menu_write:active {
+  color: black;
+ 
 }

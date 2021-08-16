@@ -10,18 +10,21 @@ import { ReactTinyLink } from 'react-tiny-link'
 import { ImageComponent } from "./MainPage";
 const BoardContainer = styled.div`
   width: 100%;
-  height: 88vh;
   display: flex;
   flex-direction: column;
+  align-items: center;
   background-color: white;
+  box-sizing: border-box;
 `;
 const Content = styled.div`
   border-bottom: 1px solid black;
   padding: 1rem 3rem;
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: left;
+  box-sizing: border-box;
 `;
 const Writer = styled.img`
   width: 2rem;
@@ -36,10 +39,12 @@ const CreatedDay = styled.div`
   font-size: 0.7rem;
 `;
 const WriterContainer = styled.div`
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1rem;
+  padding: 1rem 0px;
+  box-sizing: border-box;
 `;
 const EditBox = styled.div`
   width: 2.4rem;
@@ -47,8 +52,8 @@ const EditBox = styled.div`
   justify-content: space-between;
 `;
 const ImageContainer = styled.div`
-  width: 35rem;
-  height: 35rem;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
 `;
@@ -71,7 +76,6 @@ export default function Board({ authenticated, currentUser, match }) {
         history.push("/");
       }
       setContent(response);
-
 
     })
     .catch((error) => {

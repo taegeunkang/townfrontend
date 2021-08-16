@@ -15,12 +15,13 @@ import PrivateRoute from "./Routes/PrivateRoute";
 import Counter from "./Routes/Counter";
 import CacheRoute from "react-router-cache-route"; 
 import { CacheSwitch } from "react-router-cache-route";
-
+import "./App.css";
+import { Reset } from "styled-reset";
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100vw;
+  width: 99vw;
   background-color: gray;
   padding: 0px;
   margin: 0px;
@@ -34,7 +35,11 @@ class App extends Component {
       currentUser: null,
       loading: false,
   
-    };
+    }; 
+    const meta = document.createElement('meta');
+    meta.name = "viewport";
+    meta.content = "width=device-width, initial-scale=1.0";
+    document.getElementsByTagName('head')[0].appendChild(meta);
     
     this.loadCurrentlyLoggedInUser = this.loadCurrentlyLoggedInUser.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
@@ -77,21 +82,16 @@ class App extends Component {
       return <LoadingIndicator />;
     }
 
-
-    const height =
-    document.documentElement.scrollHeight -
-    document.documentElement.clientHeight;
-    console.log(height);
     return (
       
         <Router>
+          
+          <Container>
           <AppHeader
             authenticated={this.state.authenticated}
             onLogout={this.handleLogout}
             currentUser={this.state.currentUser}
           />
-
-          <Container>
             <CacheSwitch>
             <CacheRoute
               exact
@@ -143,7 +143,6 @@ class App extends Component {
                 <Counter   {...props}/>)}/>
              </CacheSwitch>
           </Container>
-          
         </Router>
       
     );
