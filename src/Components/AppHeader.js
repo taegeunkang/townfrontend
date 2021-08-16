@@ -17,12 +17,7 @@ const Header = styled.div`
   background-color: rgba(255,255,255,1);
   border-bottom: 0.3px solid black;
 `;
-const Home = styled.div`
-  display: flex;
-  width: 33.3%;
-  justify-content: center;
-  align-items: center;
-`;
+
 const MenuList = styled.ul`
   list-style: none;
   display: flex;
@@ -45,12 +40,7 @@ const ProfileImage = styled.img`
   border-radius: 25px;
 `;
 
-const Space = styled.div`
-  width: 33.3%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
+
 export default function AppHeader(props) {
   const history = useHistory();
   const handleLogout = () => {

@@ -57,10 +57,12 @@ export default class Edit extends Component {
     let submitData = {};
     submitData["id"] = parseInt(this.props.match.params.number);
     submitData["content"] = this.state.content;
-    console.log(submitData);
+
+
     editPost(submitData).then((response) => {
       if (response !== 0) {
-        this.props.history.push("/");
+        window.location.replace("/");
+        
       }
     });
   };

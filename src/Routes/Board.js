@@ -62,7 +62,6 @@ export default function Board({ authenticated, currentUser, match }) {
   const history = useHistory();
 
   useEffect(() => {
-   
     getOnePost(number)
     .then((response) => {
         if(handleURL(response[0][1]) !== null) {
@@ -78,6 +77,7 @@ export default function Board({ authenticated, currentUser, match }) {
     .catch((error) => {
       history.push("/login");
     });
+   
   }, []);
   const handleURL = (url) => {
     let reg =
@@ -91,6 +91,7 @@ export default function Board({ authenticated, currentUser, match }) {
     postId["id"] = content[0][0];
     deletePost(postId).then((response) => {});
     // history.push("/");
+    window.localStorage.setItem("changed", true);
     window.location.replace("/");
   };
 

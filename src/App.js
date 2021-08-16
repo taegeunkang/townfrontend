@@ -13,6 +13,9 @@ import Edit from "./Routes/Edit";
 import Write from "./Routes/Write";
 import PrivateRoute from "./Routes/PrivateRoute";
 import Counter from "./Routes/Counter";
+import CacheRoute from "react-router-cache-route"; 
+import { CacheSwitch } from "react-router-cache-route";
+
 
 const Container = styled.div`
   display: flex;
@@ -73,8 +76,14 @@ class App extends Component {
     if (this.state.loading) {
       return <LoadingIndicator />;
     }
+
+
+    const height =
+    document.documentElement.scrollHeight -
+    document.documentElement.clientHeight;
+    console.log(height);
     return (
-      <div>
+      
         <Router>
           <AppHeader
             authenticated={this.state.authenticated}
@@ -83,7 +92,8 @@ class App extends Component {
           />
 
           <Container>
-            <Route
+            <CacheSwitch>
+            <CacheRoute
               exact
               path="/"
               render={(props) => (
@@ -128,11 +138,14 @@ class App extends Component {
              authenticated={this.state.authenticated}
               currentUser={this.state.currentUser}
              component={Write}/>
+
+            <Route path="/count" render= {(props) => (
+                <Counter   {...props}/>)}/>
+             </CacheSwitch>
           </Container>
-          <Route path="/count" render= {(props) => (
-          <Counter   {...props}/>)}/>
+          
         </Router>
-      </div>
+      
     );
   }
 }

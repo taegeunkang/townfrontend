@@ -12,6 +12,8 @@ import { faCommentAlt } from "@fortawesome/free-regular-svg-icons";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import imageCompression from "browser-image-compression";
 import { ReactTinyLink } from 'react-tiny-link'
+import {GrLike, GrDislike} from "react-icons/gr";
+
 const UserData = styled.div`
   width: 100vw;
   height: 100%;
@@ -160,7 +162,7 @@ const DeletePreviewImage = styled.button`
   background-color: transparent;
   border: none;
 `;
-const Like = styled.div`
+const Likes = styled.div`
   width: 33.3%;
   border-right: 0.7px solid rgba(0,0,0,0.3);
   display:flex;
@@ -180,6 +182,17 @@ const Share = styled.div`
 const More = styled.div`
   font-size: 2rem;
 `;
+const Like = styled.div`
+  width:50%;
+  display:flex;
+  justify-content:center;
+`;
+
+const DisLike = styled.div`
+   width:50%;
+   display:flex;
+  justify-content:center;
+`;
 export default class MainPage extends Component {
   constructor(props) {
     super(props);
@@ -194,6 +207,9 @@ export default class MainPage extends Component {
       files: [],
       imageFile: "",
       page: 0,
+      scrollHeight: 0,
+      scroll: false,
+      loading: false,
     };
     this.handleFileInput = this.handleFileInput.bind(this);
     this.compressImage = this.compressImage.bind(this);
@@ -225,11 +241,15 @@ export default class MainPage extends Component {
   };
 
   componentDidMount = async () => {
-    
+    console.log("called componentDidmount");
+    window.addEventListener("scroll", this.listenToScroll);
+
     if (this.props.authenticated === true) {
       const number = this.state.page;
-      console.log(number);
+    
       const response = await getPost(String(number));
+      console.log("get new posts");
+      
       response.map((post) => {
         if(this.handleURL(post[1]) !== null){
           post.push(this.handleURL(post[1])[0]);
@@ -237,10 +257,35 @@ export default class MainPage extends Component {
         
       });
       this.setState({ posts: response });
+  
+      // //스크롤 임시 
+      // if(JSON.parse(window.sessionStorage.getItem("scrollOffset")) !== null) {
+        
+      //    window.scrollTo(0,300);
+      // }
+
     } else {
       this.props.history.push("/login");
     }
   };
+
+  //실시간 스크롤 위치 조회
+  listenToScroll = () => {
+    const winScroll =
+      document.body.scrollTop || document.documentElement.scrollTop
+  
+    const height =
+      document.documentElement.scrollHeight -
+      document.documentElement.clientHeight
+  
+    const scrolled = winScroll / height
+    this.setState({scrollHeight : scrolled});
+    // console.log(scrolled);
+  }
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this.listenToScroll);
+  }
+  
   handleURL = (url) => {
     let reg =
     new RegExp("(http(s)?:\/\/|www.)([a-z0-9w]+.*)+[a-z0-9]{2,4}([/a-z0-9-%#?&=w])+(.[a-z0-9]{2,4}([/a-z0-9-%#?&=w]+)*)*");
@@ -379,10 +424,30 @@ export default class MainPage extends Component {
   };
 
   movetoPost = (id) => {
+    const savedata = this.state.posts;
+    // window.localStorage.setItem("posts", JSON.stringify(savedata));
     let target = "/board/" + id;
     this.props.history.push(target);
   };
+  componentDidUpdate() {
   
+    // console.log("called componentDidUpdate");
+   
+    // const height =
+    // document.documentElement.scrollHeight -
+    // document.documentElement.clientHeight;
+    // let cnt =0;
+    // if(height == JSON.parse(window.sessionStorage.getItem("height")) && !this.state.scroll) {
+    //   const scrollOffset = window.sessionStorage.getItem("scrollOffset");
+    //   this.setState({scroll: true});
+    //   if(scrollOffset !== null){
+    //     window.scrollTo({top: JSON.parse(window.sessionStorage.getItem("scrollOffset")), behavior:"smooth"});
+    //     window.sessionStorage.removeItem("scrollOffset");
+    //   }
+
+    // }
+
+  }
 
   render() {
     const posts = this.state.posts;
@@ -409,10 +474,14 @@ export default class MainPage extends Component {
           </ContentBox>
 
           <CommentsBox>
-            <Like>
-            <FontAwesomeIcon size="ml" icon={faHeart} />
-          
+            <Likes>
+              <Like>
+            <GrLike />
             </Like>
+            <DisLike>
+            <GrDislike />
+            </DisLike>
+            </Likes>
             <Comment   onClick={() => {
             this.movetoPost(post[0]);
           }}>
@@ -428,7 +497,6 @@ export default class MainPage extends Component {
       </>
     ));
 
-  
 
     return (
       <UserData>

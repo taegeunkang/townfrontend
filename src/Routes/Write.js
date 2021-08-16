@@ -1,8 +1,7 @@
 import React, { Component } from "react";
 import styled from "styled-components";
-import { uploadFileTest, getPost} from "../Components/APIUtils";
+import { uploadFileTest} from "../Components/APIUtils";
 import imageCompression from "browser-image-compression";
-import { post } from "request";
 
 const WriteContainer = styled.div`
     width: 100%;
@@ -77,7 +76,6 @@ export default class Write extends Component {
         e.preventDefault();
         const fileArr = e.target.files;
         this.setState({files: fileArr});    
-        console.log(fileArr);    
         const fileLength = fileArr.length > 5 ? 5: fileArr.length;
         this.setState({fileCount : fileLength});
         for(var i=0; i<fileLength; i++) {
@@ -118,33 +116,26 @@ export default class Write extends Component {
        postData.append("content", this.state.content);
        postData.append("user", this.props.currentUser.id);
        
-       console.log(this.state.files);
        const data = await this.compressImage(this.state.files);
-       console.log(data);
        data.forEach((file) => {
         postData.append("files", file);
       });
      
       await uploadFileTest(postData);
         
-    //   window.location.replace("/");
-      this.props.history.push("/");
+      window.location.replace("/");
+    
     };
     DeletePreviewImageHandler = (e) => {
-        console.log("Delete");
-        console.log(e.target.value);
         let data = [];
         let file = [];
         let len = this.state.fileCount;
-        console.log(len);
         for(var i =0; i< len; i++) {
             if(e.target.value !== i) {
                 data.push(this.state.previewURL[i]);
                 file.push(this.state.files[i]);
             }
         }
-        console.log(data);
-        console.log(file);
         this.setState({previewURL : data, files: file,fileCount: this.state.fileCount-1});
     };
 
