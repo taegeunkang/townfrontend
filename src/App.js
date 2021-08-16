@@ -12,6 +12,7 @@ import Board from "./Routes/Board";
 import Edit from "./Routes/Edit";
 import Write from "./Routes/Write";
 import PrivateRoute from "./Routes/PrivateRoute";
+import Counter from "./Routes/Counter";
 
 const Container = styled.div`
   display: flex;
@@ -29,7 +30,9 @@ class App extends Component {
       authenticated: false,
       currentUser: null,
       loading: false,
+  
     };
+    
     this.loadCurrentlyLoggedInUser = this.loadCurrentlyLoggedInUser.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
   }
@@ -126,6 +129,8 @@ class App extends Component {
               currentUser={this.state.currentUser}
              component={Write}/>
           </Container>
+          <Route path="/count" render= {(props) => (
+          <Counter   {...props}/>)}/>
         </Router>
       </div>
     );

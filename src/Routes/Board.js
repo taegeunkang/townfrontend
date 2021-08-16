@@ -10,6 +10,7 @@ import { ReactTinyLink } from 'react-tiny-link'
 import { ImageComponent } from "./MainPage";
 const BoardContainer = styled.div`
   width: 100%;
+  height: 88vh;
   display: flex;
   flex-direction: column;
   background-color: white;
