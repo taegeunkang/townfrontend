@@ -16,7 +16,7 @@ const Header = styled.div`
   align-items: center;
   position: sticky;
   top: 0;
-  background-color: rgba(255,255,255,1);
+  background-color: white;
   border-bottom: 0.3px solid black;
   z-index: 100;
   
@@ -35,9 +35,6 @@ const Menu = styled.li`
   width: 33.3%;
   display: flex;
   font-weight: 600;
-  gap:1rem;
-
-  justify-content: center;
   align-items: center;
 `;
 const Login = styled.div`
@@ -81,24 +78,18 @@ export default function AppHeader(props) {
       {props.authenticated ? (
         <>
           <MenuList>
-            <Menu>
-              <Link  to="/profile">
-                <ProfileImage
-                  src={props.currentUser.imageUrl}
-                  alt="profileImage"
-                ></ProfileImage>
-              </Link>
-              <GiHamburgerMenu onClick={()=> setBurger(!burger)} size="1.5rem" />
+            <Menu style={{marginLeft : "5%"}}>
+              <GiHamburgerMenu color="black" onClick={()=> setBurger(!burger)} size="1.5rem" />
             </Menu>
 
-            <Menu>
+            <Menu style={{justifyContent: "center"}}>
               <Link class="menu_style" to="/">
                 Town
               </Link>
             </Menu>
-            <Menu>
-            <BiSearchAlt size="1.6rem" />
-              <Link class="menu_write" to="/write" >
+            <Menu style={{justifyContent:"flex-end"}} >
+            <BiSearchAlt size="1.6rem" color="black"  />
+              <Link class="menu_write menu_twin" to="/write" >
               <ImPencil2 size="1.4rem" />
               </Link>
             
@@ -108,17 +99,12 @@ export default function AppHeader(props) {
           (<HamburgerMenu>
             <BurgerList>
               <Burgers>
-            <Logout onClick={handleLogout}>Logout</Logout>
+            <Link class="menu_burger" to="/profile" >마이페이지</Link>
             </Burgers>
             <Burgers>
             <Logout onClick={handleLogout}>Logout</Logout>
             </Burgers>
-            <Burgers>
-            <Logout onClick={handleLogout}>Logout</Logout>
-            </Burgers>
-            <Burgers>
-            <Logout onClick={handleLogout}>Logout</Logout>
-            </Burgers>
+           
             </BurgerList>
           </HamburgerMenu>
           )}

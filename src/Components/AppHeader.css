@@ -32,3 +32,14 @@
   color: black;
  
 }
+
+.menu_burger {
+  text-decoration: none;
+  color: black;
+  font: 1rem;
+}
+
+.menu_twin {
+  margin-left: 0.8rem;
+  margin-right: 0.3rem;
+}

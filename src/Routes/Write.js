@@ -12,17 +12,27 @@ const WriteContainer = styled.div`
     background-color: white;
 `;
 const WriteForm = styled.form`
-    width: 37rem;
-    height: 23rem;
+    width: 97%;
+    height: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    margin-top:3rem;
 `;
 const InputText = styled.textarea`
-    width: 30rem;
-    height: 20rem;
+    width: 90%;
+    height: 100%;
+`;
+const Profile = styled.div`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding-left: 5%;
+`;
+const ProfileImage = styled.img`
+    width: 2rem;
+    border-radius: 25px;
 `;
 const SubmitButton = styled.button`
     background-color: rgba(0,0,0,0.3);
@@ -49,7 +59,7 @@ const DeleteImage = styled.button`
 `;
 const Buttons = styled.div`
     display: flex;
-    width: 30rem;
+    width: 100%;
     justify-content: flex-end;
 `;
 export default class Write extends Component {
@@ -150,6 +160,10 @@ export default class Write extends Component {
             </>
         ));
         return (<WriteContainer>
+            <Profile>
+                <ProfileImage src={this.props.currentUser.imageUrl} />
+                {this.props.currentUser.name}
+            </Profile>
             <WriteForm onSubmit = {this.handleSubmit}>
                 <InputText 
                  name="content"

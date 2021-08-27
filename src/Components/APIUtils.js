@@ -161,3 +161,32 @@ export function loadImage(imageRequest) {
     method: "GET",
   });
 }
+
+export function setLike(likeRequest) {
+  return request({
+    url: API_BASE_URL + "/post/like",
+    method: "POST",
+    body: JSON.stringify(likeRequest)
+  });
+}
+
+export function setDisLike(dislikeRequest) {
+  return request({
+    url:API_BASE_URL + "/post/dislike",
+    method: "POST",
+    body: JSON.stringify(dislikeRequest)
+  });
+}
+
+export function getLike(likeRequest) {
+  return request({
+    url: API_BASE_URL + "/post/likes/user?id="+likeRequest,
+    method: "GET",
+  });
+}
+export function getDisLike(dislikeRequest) {
+  return request({
+    url: API_BASE_URL+ "/post/dislikes/user?id="+dislikeRequest,
+    method:"GET",
+  });
+}

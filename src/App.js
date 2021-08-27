@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import styled from "styled-components";
+import styled, {ThemeProvider, createGlobalStyle}from "styled-components";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import MainPage from "./Routes/MainPage";
 import Login from "./Routes/Login";
@@ -16,17 +16,20 @@ import Counter from "./Routes/Counter";
 import CacheRoute from "react-router-cache-route"; 
 import { CacheSwitch } from "react-router-cache-route";
 import "./App.css";
-import { Reset } from "styled-reset";
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 99vw;
-  background-color: gray;
+  background-color: rgba(0,0,0,0.3);
   padding: 0px;
   margin: 0px;
 `;
-
+const GlobalStyle = createGlobalStyle`
+  body{
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  }
+`;
 class App extends Component {
   constructor(props) {
     super(props);
@@ -34,13 +37,14 @@ class App extends Component {
       authenticated: false,
       currentUser: null,
       loading: false,
-  
+     
     }; 
     const meta = document.createElement('meta');
     meta.name = "viewport";
-    meta.content = "width=device-width, initial-scale=1.0";
+    meta.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0";
     document.getElementsByTagName('head')[0].appendChild(meta);
     
+
     this.loadCurrentlyLoggedInUser = this.loadCurrentlyLoggedInUser.bind(this);
     this.handleLogout = this.handleLogout.bind(this);
   }
@@ -85,7 +89,7 @@ class App extends Component {
     return (
       
         <Router>
-          
+         
           <Container>
           <AppHeader
             authenticated={this.state.authenticated}

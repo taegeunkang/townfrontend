@@ -18,7 +18,7 @@ const BoardContainer = styled.div`
 `;
 const Content = styled.div`
   border-bottom: 1px solid black;
-  padding: 1rem 3rem;
+  padding: 1% 3%;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -59,7 +59,12 @@ const ImageContainer = styled.div`
 `;
 const ContentText = styled.div`
   text-align: left;
+  margin-bottom: 2%;
   width: 100%;
+`;
+const LoadingContainer = styled.div`
+  width: 100%;
+  height: 100%;
 `;
 export default function Board({ authenticated, currentUser, match }) {
   const [content, setContent] = useState([]);
@@ -67,6 +72,7 @@ export default function Board({ authenticated, currentUser, match }) {
   const history = useHistory();
 
   useEffect(() => {
+    console.log("did");
     getOnePost(number)
     .then((response) => {
         if(handleURL(response[0][1]) !== null) {
@@ -161,7 +167,9 @@ export default function Board({ authenticated, currentUser, match }) {
           </Content>
           <Comments id={content[0][0]} currentUser={currentUser}></Comments>
         </BoardContainer>
-      ) : null}
+      ) : <LoadingContainer>
+           Loading...
+        </LoadingContainer>}
     </div>
   );
 }

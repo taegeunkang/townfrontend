@@ -1,18 +1,23 @@
 import { Component } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPencilAlt } from "@fortawesome/free-solid-svg-icons";
+import { faPencilAlt, fas } from "@fortawesome/free-solid-svg-icons";
 import {
   getPost,
-
+  setLike,
+  setDisLike,
   uploadFileTest,
   loadImage,
+  getLike,
+  getDisLike
 } from "../Components/APIUtils";
 import { faCommentAlt } from "@fortawesome/free-regular-svg-icons";
 import { faHeart } from "@fortawesome/free-regular-svg-icons";
 import imageCompression from "browser-image-compression";
 import { ReactTinyLink } from 'react-tiny-link'
-import {AiOutlineLike,AiOutlineDislike, AiTwotoneLike, AiTwotoneDislike} from "react-icons/ai"
+import {AiOutlineLike,AiOutlineDislike, AiTwotoneLike, AiTwotoneDislike, AiFillHeart} from "react-icons/ai"
+import {RiChat1Line} from "react-icons/ri";
+import {HiOutlineEmojiSad} from "react-icons/hi";
 
 const UserData = styled.div`
   width: 100%;
@@ -23,21 +28,24 @@ const UserData = styled.div`
   align-items: center;
 `;
 
-
+const LastPage = styled.div`
+  font-size: 2rem;
+  color: white;
+`;
 const CommentList = styled.li`
   list-style: none;
   width: 100%;
   padding-right: 0px;
   padding-left: 0px;
-  border-bottom: 1px solid black;
-  border-top: 1px solid black;
   background-color: white;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
+  
+  
 `;
 
 const UserListContainer = styled.div`
@@ -50,8 +58,8 @@ const UserListContainer = styled.div`
 
 const Content = styled.div`
   width: 100%;
-  padding-left: 2rem;
-  padding-right: 2rem;;
+  padding-left: 1rem;
+  padding-right: 1rem;;
   margin-bottom: 1rem;
   box-sizing: border-box;
   display: flex;
@@ -59,7 +67,7 @@ const Content = styled.div`
 `;
 const ContentBox = styled.div`
   width: 100%;
-  height: auto;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -68,31 +76,33 @@ const ContentBox = styled.div`
   margin-bottom: 1rem;
 `;
 const WritedDate = styled.div`
-  padding-top: 0.5rem;
-  padding-right: 1.3rem;
-  font-size: 0.8rem;
+  padding-right: 0.5rem;
+  font-size: 0.7rem;
 `;
 
 const CommentsBox = styled.div`
   display: flex;
-  width: 37rem;
-  border-top: 0.7px solid rgba(0,0,0,0.3);
-  margin-top: 0.3rem;
-  padding-top: 0.5rem;
+  width: 100%;
+  height: 1.7rem;
+  border-top: 0.2px solid rgba(0,0,0,0.2);
   
 `;
-const Name = styled.div``;
+const Name = styled.span`
+  font-size:0.8rem;
+  font-weight: 600;
+`;
 
 const ProfleImage = styled.img`
-  width: 2rem;
-  height: 2rem;
-  border-radius: 25px;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 25%;
+  margin-right:0.3rem;
 `;
 const Writer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-left: 1rem;
+  margin-left: 0.3rem;
 `;
 const WriteBox = styled.div`
   position: absolute;
@@ -109,33 +119,41 @@ const PreviewImageContainer = styled.div`
 const WritingBox = styled.div`
   display: flex;
   width: 100%;
+  align-items: center;
+  padding-top: 0.4rem;
   justify-content: space-between;
+  padding-bottom: 0.4rem;
+  border-bottom: 0.2px solid rgba(0,0,0,0.2);
 `;
-const PreviewImage = styled.img`
-  width: 7rem;
-  height: 7rem;
-`;
-const DeletePreviewImage = styled.button`
-  width: 1rem;
-  height: 1rem;
-  position: relative;
-  top: -3rem;
-  right: 2rem;
-  color: white;
-  background-color: transparent;
-  border: none;
-`;
+
 const Likes = styled.div`
   width: 33.3%;
-  border-right: 0.7px solid rgba(0,0,0,0.3);
+  border-right: 0.2px solid rgba(0,0,0,0.2);
   display:flex;
   justify-content:center;
 `;
 const Comment = styled.div`
   width: 33.3%;
-  border-right: 0.7px solid rgba(0,0,0,0.3);
+  border-right: 0.2px solid rgba(0,0,0,0.2);
   display:flex;
   justify-content:center;
+  align-items:center;
+  
+`;
+const CountBox = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 0.7rem;
+  color:rgba(0,0,0,0.5);
+  padding-left: 1rem;
+  box-sizing: border-box;
+  padding-bottom: 0.3rem;
+`;
+const LoadingContainer = styled.div`
+  color: white;
+  font-size: 2rem;
 `;
 const Share = styled.div`
   width: 33.3%;
@@ -150,6 +168,8 @@ const Like = styled.div`
   display:flex;
   color: black;
   justify-content:center;
+  align-items: center;
+  border-right: 0.2px solid rgba(0,0,0,0.2);
 `;
 
 const DisLike = styled.div`
@@ -157,6 +177,7 @@ const DisLike = styled.div`
    display:flex;
    color: black;
   justify-content:center;
+  align-items: center;
 `;
 export default class MainPage extends Component {
   constructor(props) {
@@ -175,8 +196,13 @@ export default class MainPage extends Component {
       scrollHeight: 0,
       scroll: false,
       loading: false,
+      last : false,
       like : [],
       dislike : [],
+      didLike : [],
+      didDisLike: [],
+      selectedLike : [],
+      selectedDisLike : [],
     };
     this.handleFileInput = this.handleFileInput.bind(this);
     this.compressImage = this.compressImage.bind(this);
@@ -208,28 +234,43 @@ export default class MainPage extends Component {
   };
 
   componentDidMount = async () => {
-    console.log("called componentDidmount");
     window.addEventListener("scroll", this.listenToScroll);
 
-    if (this.props.authenticated === true) {
-      const number = this.state.page;
-    
-      const response = await getPost(String(number));
-      console.log("get new posts");
+
       
+
+    //linke preview -> 리액트 cheerio 사용 
+
+
+    
+    if (this.props.authenticated === true) {
+
+      const likes = await getLike(this.props.currentUser.id);
+      this.setState({didLike: likes});
+
+      const disLikes = await getDisLike(this.props.currentUser.id);
+      this.setState({didDisLike : disLikes});
+      const number = this.state.page;
+      
+      const response = await getPost(String(number));
+
       response.map((post) => {
+        this.distinguishLike(post[0]);
+        this.distinguishDisLike(post[0]);
         if(this.handleURL(post[1]) !== null){
           post.push(this.handleURL(post[1])[0]);
         }
         
       });
       this.setState({ posts: response });
+
   
       // //스크롤 임시 
       // if(JSON.parse(window.sessionStorage.getItem("scrollOffset")) !== null) {
         
       //    window.scrollTo(0,300);
       // }
+      console.log(response);
 
     } else {
       this.props.history.push("/login");
@@ -247,7 +288,12 @@ export default class MainPage extends Component {
   
     const scrolled = winScroll / height
     this.setState({scrollHeight : scrolled});
-    // console.log(scrolled);
+    //스크롤이 맨밑이면 게시글 추가로 불러옴
+    if(scrolled == 1 && this.state.last == false) {
+      console.log("하하하");
+      this.loadMorePage();
+    }
+
   }
   componentWillUnmount() {
     window.removeEventListener("scroll", this.listenToScroll);
@@ -344,12 +390,28 @@ export default class MainPage extends Component {
   };
   loadMorePage = async () => {
     let number = this.state.page;
-    number = number + 1;
-    const response = await getPost(String(number));
-    console.log(response);
+    console.log("called");
+    this.setState({loading: true});
+    const response = await getPost(String(number +1));
+    if(response.length > 0){
+      number = number + 1;
+    }else {
+      console.log("last");
+      this.setState({last : true});
+    }
 
-    this.setState({page : number, posts: this.state.posts.concat(response) });
-    console.log(this.state.page)
+    response.map((post) => {
+      this.distinguishLike(post[0]);
+      this.distinguishDisLike(post[0]);
+      if(this.handleURL(post[1]) !== null){
+        post.push(this.handleURL(post[1])[0]);
+      }
+      
+    });
+
+    this.setState({page : number, posts: this.state.posts.concat(response), loading: false });
+
+    
 
   }
 
@@ -399,22 +461,68 @@ export default class MainPage extends Component {
   componentDidUpdate() {
   }
 
-  handleLike = (e) => {
+  handleLike = async(e) => {
     const name = e.currentTarget.getAttribute("name");
-    console.log(name);
+    const writer = e.currentTarget.getAttribute("value");
+    const id = e.currentTarget.getAttribute("id");
+    const p = this.state.posts;
+    p[id][8] += 1;
+
+
     let likes = this.state.like;
     likes[name] = true
-    this.setState({like : likes});
-    console.log(this.state.like);
+    this.setState({like : likes, posts: p});
+    let rq = {};
+    rq["post"] = name;
+    rq["user"] = writer;
+    setLike(rq);
+    
   }
 
   handleDisLike = (e) => {
     const name = e.currentTarget.getAttribute("name");
+    const writer = e.currentTarget.getAttribute("value");
+    const id = e.currentTarget.getAttribute("id");
+    const p = this.state.posts;
+    p[id][9] += 1
     let dislikes = this.state.dislike;
     dislikes[name] = true
-    this.setState({dislike : dislikes});
+    this.setState({dislike : dislikes, posts: p});
+    let rq = {};
+    rq["post"] = name;
+    rq["user"] = writer;
+    setDisLike(rq);
   }
+  
+  distinguishLike = (id) => {
+    const likes = this.state.didLike;
 
+    let selected = this.state.selectedLike;
+    for (var i =0; i< likes.length; i++) {
+      if(likes[i] == id){
+        selected[id] = true;
+        this.setState({selectedLike : selected});
+        break;
+      }
+        
+    }
+  
+   
+  }
+  distinguishDisLike = (id) => {
+    const disLikes = this.state.didDisLike;
+    let selected = this.state.selectedDisLike;
+    for (var j =0; j<disLikes.length; j++) {
+      if(disLikes[j] == id){
+        selected[id] = true;
+        this.setState({selectedDisLike : selected});
+        break;
+      }
+        
+    }
+
+  }
+  // https://cors-anywhere.herokuapp.com <- react-tiny-link default proxy
 
   render() {
     const posts = this.state.posts;
@@ -436,24 +544,32 @@ export default class MainPage extends Component {
           }}>
             <Content>{post[1]}</Content>
             
-            {post.length > 8 ? (<ReactTinyLink cardSize="medium" showGraphic={true}  maxLine={2} minLine={1} url={post[8]} proxyUrl="https://cors.bridged.cc" />) : null}
-            <ImageComponent count={post[7]} post_id={post[0]} />
+            {post.length > 10 ? (<ReactTinyLink cardSize="medium" showGraphic={true}  maxLine={2} minLine={1} url={post[10]} proxyUrl="https://cors.bridged.cc" />) : null}
+             {post[7] > 0 ? (<ImageComponent count={post[7]} post_id={post[0]} />) : null}
           </ContentBox>
-
+          <CountBox>
+            <div style={{marginRight: "0.5rem"}}>
+              <AiFillHeart size="1rem" color="#ef476f" />{post[8]}개
+            </div>
+            <div>
+              <HiOutlineEmojiSad size="1rem" color="#fca311"/>{post[9]}개
+            </div>
+          </CountBox>
           <CommentsBox>
             <Likes>
-              <Like name = {post[0]} onClick={this.handleLike}>
-                {this.state.like[post[0]] ?<AiTwotoneLike /> : <AiOutlineLike />}
+              <Like name = {post[0]} value ={post[4]} id={index} onClick={this.handleLike}>
+                {(this.state.like[post[0]] || this.state.selectedLike[post[0]]) ?<AiTwotoneLike size="1.3rem" /> : <AiOutlineLike  size="1.3rem"/>} 
                </Like>
-              <DisLike name = {post[0]} onClick={this.handleDisLike}>
-                {this.state.dislike[post[0]] ? <AiTwotoneDislike /> : <AiOutlineDislike /> }
+              <DisLike name = {post[0]} value={post[4]} id={index} onClick={this.handleDisLike}>
+                {this.state.dislike[post[0]] || this.state.selectedDisLike[post[0]]? <AiTwotoneDislike size="1.3rem" /> : <AiOutlineDislike size="1.3rem" /> }
+                
               </DisLike>
             </Likes>
             <Comment   onClick={() => {
             this.movetoPost(post[0]);
           }}>
-            <FontAwesomeIcon icon={faCommentAlt} />
-            {post[3]}
+            <RiChat1Line size="1.3rem" />
+            <span style={{fontSize:"0.8rem",marginBottom:"-0.2rem", marginLeft:"0.1rem"}}>댓글 {post[3]}</span>
             </Comment>
           
             <Share>
@@ -468,7 +584,7 @@ export default class MainPage extends Component {
     return (
       <UserData>
         <UserListContainer>{postsprint}</UserListContainer>
-        <More onClick={this.loadMorePage}>more</More>
+        {this.state.last == true ? <LastPage> 마지막</LastPage>: <LoadingContainer> 로딩중</LoadingContainer>}
       </UserData>
     );
   }
@@ -480,18 +596,26 @@ const ImageContainer = styled.div`
   display: flex;
   overflow-y: hidden;
   background-color: black;
+  position: absolute;
+
 `;
 
 const ContainerBox = styled.div`
   width: 100%;
   height: 100%;
   padding:0px;
+  position: relative;
+  &:after {
+    content: "";
+    display: block;
+    padding-bottom: 100%;
+  }
  
   
 `;
 const ImagePrint = styled.img`
   width: 100%;
-  height: 100%;
+  height: auto;
   object-fit: contain;
 `;
 export class ImageComponent extends Component {
